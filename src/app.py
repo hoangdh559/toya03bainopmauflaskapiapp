@@ -49,10 +49,8 @@ def release():
 @app.route('/most_3_recent/release')
 def most_3_recent():
   releases = release()
-  most_3_recent = releases["data"][:3]
-  return jsonify({
-      "data": most_3_recent
-  })
+  most_3_recent = releases[:3]
+  return most_3_recent
 
 
 if __name__=='__main__':
