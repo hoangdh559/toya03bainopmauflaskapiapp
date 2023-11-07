@@ -12,29 +12,49 @@
    ma_debai = toya03bainopmauflaskapiapp
 """
 
-from flask import Flask, jsonify
 import os
-#
-from src.helper import github_request
+from types import resolve_bases
 
+import requests
+from flask import Flask, jsonify
 
 app = Flask(__name__)
+port = os.environ.get("PORT")
+port = os.getenv("PORT", 5000) if port is None else int(port)
 
 
 @app.route('/')
 def index():
-  pass#todo
-
-
+  return {}
+    
 @app.route('/release')
 def release():
-  pass#todo
-
+  response = requests.get("https://api.github.com/repos/pyenv/pyenv/releases")
+  
+  if response.status_code == 404:
+    return jsonify({
+        "error": "Không thể lấy dữ liệu từ GitHub"
+    })
+  else:
+    data = response.json()
+    return jsonify({
+        "data": [
+            {
+                "created_at": release["created_at"],
+                "tag_name": release["tag_name"],
+                "body": release["body"]
+            } for release in data
+        ]
+    })
 
 @app.route('/most_3_recent/release')
-def most_3_recent__release():
-  pass#todo
+def most_3_recent():
+  releases = release()
+  most_3_recent = releases["data"][:3]
+  return jsonify({
+      "data": most_3_recent
+  })
 
 
 if __name__=='__main__':
-  app.run(debug=True, port=os.environ.get('PORT', 5000) )
+  app.run(debug=True, port = os.environ.get("PORT",5000))
