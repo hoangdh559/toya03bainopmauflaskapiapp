@@ -37,15 +37,14 @@ def release():
     })
   else:
     data = response.json()
-    return jsonify({
-        "data": [
-            {
-                "created_at": release["created_at"],
-                "tag_name": release["tag_name"],
-                "body": release["body"]
-            } for release in data
-        ]
-    })
+    releases = []
+    for release in data:
+        releases.append({
+            "created_at": release["created_at"],
+            "tag_name": release["tag_name"],
+            "body": release["body"]
+        })
+    return releases
 
 @app.route('/most_3_recent/release')
 def most_3_recent():
